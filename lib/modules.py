@@ -1,4 +1,5 @@
 # Modules from FruityWifi
+from dot3k.menu import MenuOption
 
 class Modules(MenuOption):
     

@@ -1,4 +1,5 @@
 # Commands from FruityWifi
+from dot3k.menu import MenuOption
 
 class Commands(MenuOption):
     

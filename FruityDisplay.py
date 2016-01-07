@@ -1,18 +1,21 @@
 #!/usr/bin/env python
+import sys
+sys.path.append('lib')
 
 # FruityDisplay for Display O Tron 3000
 from dot3k.menu import Menu
 import dot3k.backlight as backlight
 import dot3k.lcd as lcd
+import dot3k.joystick
 import time
 from configobj import ConfigObj
 
 # libs
-from lib.about import AboutFruityWifi, About
-from lib.status import IPAddress, GraphTemp, GraphCPU, GraphNetSpeed
-from lib.settings import Backlight, Randomlight, Contrast
-from lib.modules import Modules
-from lib.commands import Commands
+from about import AboutFruityWifi, About
+from status import IPAddress, GraphTemp, GraphCPU, GraphNetSpeed
+from settings import Backlight, Randomlight, Contrast
+from modules import Modules
+#from commands import Commands
 
 config = ConfigObj("init.conf")
 
@@ -21,16 +24,16 @@ __FIRMWARE__ = "1.0-o-tron"
 __FRUITYWIFI__ = "2.2"
 
 # fire up the display background with the color from config file
-backlight.rgb(config["lcd"]["default_color"])
+backlight.rgb(int(config["lcd"]["default_color"][0]), int(config["lcd"]["default_color"][1]), int(config["lcd"]["default_color"][2]) )
 
 # menu struct
 menu = Menu(
     structure={
         'Modules': Modules(),
-        'Commands': Commands(),
+ #       'Commands': Commands(),
         'About': {
             'This App': About(),
-            'FruityWifi': AboutFruityWifi()
+            'FruityWifi': AboutFruityWifi(__FRUITYWIFI__, __FIRMWARE__)
         },
         'Status': {
             'IP': IPAddress(),
@@ -50,9 +53,9 @@ menu = Menu(
 
 def showWelcomeMessage():
     lcd.clear()
-    lcd.set_cursor_position(3,0)
+    lcd.set_cursor_position(0,0)
     lcd.write("Welcome!")
-    lcd.set_cursor_position(3,1)
+    lcd.set_cursor_position(0,1)
     lcd.write("FruityWiFi " +  __FRUITYWIFI__)
     time.sleep(2)
 
@@ -63,13 +66,13 @@ def loadingScreen():
     backlight.set_bar(0, 20)
     
     # write loading message to lcd
-    lcd.set_cursor_position(0,0)
-    lcd.write("Loading, please wait")
+    lcd.set_cursor_position(3,1)
+    lcd.write("Loading...")
     
     # fire up bargraph leds! Wohoo
-    for i in range(50):
-        backlight.set_graph(i / 100.0)
-        time.sleep(0.05)
+    for i in range(100):
+        backlight.set_graph(i / 70.0)
+        time.sleep(0.005)
         
     # disable leds =(
     backlight.set_graph(0)
@@ -79,6 +82,19 @@ def loadingScreen():
 loadingScreen()
 # show welcome message
 showWelcomeMessage()
+
+@dot3k.joystick.on(dot3k.joystick.UP)
+def handle_up(pin):
+    menu.up()
+
+
+@dot3k.joystick.on(dot3k.joystick.DOWN)
+def handle_down(pin):
+    menu.down()
+
+@dot3k.joystick.on(dot3k.joystick.RIGHT)
+def handle_right(pin):
+    menu.right()
 
 while 1:
     menu.redraw()

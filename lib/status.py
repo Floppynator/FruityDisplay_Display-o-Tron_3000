@@ -7,7 +7,7 @@ import socket
 import fcntl
 import struct
 from dot3k.menu import MenuOption
-
+from configobj import ConfigObj
 
 def run_cmd(cmd):
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -85,12 +85,12 @@ class GraphCPU(MenuOption):
 
         # display color depends from cpu load
         if psutil.cpu_percent() > 50:
-            self.backlight.rgb(self.config["lcd"]["cpu50_90"])
+            self.backlight.rgb(int(self.config["lcd"]["cpu50_90"][0]), int(self.config["lcd"]["cpu50_90"][1]), int(self.config["lcd"]["cpu50_90"][2]))
         elif psutil.cpu_percent() > 90:
-            self.backlight.rgb(self.config["lcd"]["cpu90_99"])
+            self.backlight.rgb(int(self.config["lcd"]["cpu90_99"][0]), int(self.config["lcd"]["cpu90_99"][1]), int(self.config["lcd"]["cpu90_99"][2]))
         else: 
             # default
-            self.backlight.rgb(self.config["lcd"]["default_color"])
+            self.backlight.rgb(int(self.config["lcd"]["default_color"][0]), int(self.config["lcd"]["default_color"][1]), int(self.config["lcd"]["default_color"][2]))
             
         self.cpu_samples.append(psutil.cpu_percent())
         self.cpu_samples.pop(0)
@@ -143,12 +143,12 @@ class GraphTemp(MenuOption):
 
         # display color depends from cpu/gpu temp
         if self.get_cpu_temp() > 50 or self.get_gpu_temp() > 50:
-            self.backlight.rgb(self.config["lcd"]["temp50_70"])
+            self.backlight.rgb(int(self.config["lcd"]["temp50_70"][0]), int(self.config["lcd"]["temp50_70"][1]), int(self.config["lcd"]["temp50_70"][2]))
         elif self.get_cpu_temp() > 70 or self.get_gpu_temp() > 70:
-            self.backlight.rgb(self.config["lcd"]["temp70_99"])
+            self.backlight.rgb(int(self.config["lcd"]["temp70_99"][0]), int(self.config["lcd"]["temp70_99"][1]), int(self.config["lcd"]["temp70_99"][2]))
         else:
             # default
-            self.backlight.rgb(self.config["lcd"]["default_color"])
+            self.backlight.rgb(int(self.config["lcd"]["default_color"][0]), int(self.config["lcd"]["default_color"][1]), int(self.config["lcd"]["default_color"][2]))
             
         menu.write_row(0, 'Temperature')
         menu.write_row(1, 'CPU:' + str(self.get_cpu_temp()))
