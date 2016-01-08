@@ -4,21 +4,23 @@ from dot3k.menu import MenuOption
 from dot3k.menu import MenuIcon
 import colorsys
 import random
-from configobj import ConfigObj
 
 class Randomlight(MenuOption):
     def __init__(self, backlight):
         self.backlight = backlight
-        config = ConfigObj("init.conf")
 
-        rgb = config["lcd"]["default_color"]
-        
-        self.r = rgb[0]
-        self.g = rgb[1]
-        self.b = rgb[2]
-        
         MenuOption.__init__(self)
 
+    def setup(self, config):
+        default_color = config.get("lcd","default_color").split(",")
+        self.default_color_r = int(default_color[0])
+        self.default_color_g = int(default_color[1])
+        self.default_color_b = int(default_color[2])
+
+        self.r = self.default_color_r
+        self.g = self.default_color_g
+        self.b = self.default_color_b
+	
     def up(self):
         self.r = random.randint(0,255)
         self.g = random.randint(0,255)

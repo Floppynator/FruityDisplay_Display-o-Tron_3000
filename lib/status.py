@@ -7,7 +7,6 @@ import socket
 import fcntl
 import struct
 from dot3k.menu import MenuOption
-from configobj import ConfigObj
 
 def run_cmd(cmd):
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -75,21 +74,25 @@ class GraphCPU(MenuOption):
         self.cpu_samples = [0, 0, 0, 0, 0]
         self.cpu_avg = 0
         self.last = self.millis()
-	config = ConfigObj("init.conf")	
-
-	self.cpu50_90_r = int(config["lcd"]["cpu50_90"][0])
-	self.cpu50_90_g = int(config["lcd"]["cpu50_90"][1])
-	self.cpu50_90_b = int(config["lcd"]["cpu50_90"][2])
-
-	self.cpu90_99_r = int(config["lcd"]["cpu90_99"][0])
-	self.cpu90_99_g = int(config["lcd"]["cpu90_99"][1])
-	self.cpu90_99_b = int(config["lcd"]["cpu90_99"][2])
-
-	self.default_color_r = int(config["lcd"]["default_color"][0])
-	self.default_color_g = int(config["lcd"]["default_color"][1])
-	self.default_color_b = int(config["lcd"]["default_color"][2])
 
         MenuOption.__init__(self)
+    
+    def setup(self, config):
+	
+	cpu50_90 = config.get("lcd","cpu50_90").split(",")
+	self.cpu50_90_r = int(cpu50_90[0])
+        self.cpu50_90_g = int(cpu50_90[1])
+        self.cpu50_90_b = int(cpu50_90[2])
+	
+	cpu90_99 = config.get("lcd","cpu90_99").split(",")
+	self.cpu90_99_r = int(cpu90_99[0])
+        self.cpu90_99_g = int(cpu90_99[1])
+        self.cpu90_99_b = int(cpu90_99[2])
+
+	default_color = config.get("lcd","default_color").split(",")
+        self.default_color_r = int(default_color[0])
+        self.default_color_g = int(default_color[1])
+        self.default_color_b = int(default_color[2])
 
     def redraw(self, menu):
         now = self.millis()
@@ -133,17 +136,24 @@ class GraphTemp(MenuOption):
     def __init__(self, backlight=None):
         self.backlight = backlight
         self.last = self.millis()
-        config = ConfigObj("init.conf")
 
-	self.temp50_70_r = int(config["lcd"]["temp50_70"][0])
-	self.temp50_70_g = int(config["lcd"]["temp50_70"][1])
-	self.temp50_70_b = int(config["lcd"]["temp50_70"][2])
-
-	self.default_color_r = int(config["lcd"]["default_color"][0])
-        self.default_color_g = int(config["lcd"]["default_color"][1])
-        self.default_color_b = int(config["lcd"]["default_color"][2])
-        
 	MenuOption.__init__(self)
+
+    def setup(self, config):
+        temp50_70 = config.get("lcd","temp50_70").split(",")
+        self.temp50_70_r = int(temp50_70[0])
+        self.temp50_70_g = int(temp50_70[1])
+        self.temp50_70_b = int(temp50_70[2])
+
+	temp70_99 = config.get("lcd","temp70_99").split(",")
+        self.temp70_99_r = int(temp70_99[0])
+        self.temp70_99_g = int(temp70_99[1])
+        self.temp70_99_b = int(temp70_99[2])
+
+        default_color = config.get("lcd","default_color").split(",")
+        self.default_color_r = int(default_color[0])
+        self.default_color_g = int(default_color[1])
+        self.default_color_b = int(default_color[2])
 
     def get_cpu_temp(self):
         tempFile = open("/sys/class/thermal/thermal_zone0/temp")
@@ -164,14 +174,14 @@ class GraphTemp(MenuOption):
             return False
 
         # display color depends from cpu/gpu temp
-        if self.get_cpu_temp() > 50 or self.get_gpu_temp() > 50:
+        '''if self.get_cpu_temp() > 50 or self.get_gpu_temp() > 50:
             self.backlight.rgb(self.temp50_70_r, self.temp50_70_g, self.temp50_70_b)
         elif self.get_cpu_temp() > 70 or self.get_gpu_temp() > 70:
             self.backlight.rgb(self.temp70_99_r, self.temp70_99_g, self.temp70_99_b)
         else:
             # default
             self.backlight.rgb(self.default_color_r, self.default_color_g, self.default_color_b)
-            
+           ''' 
         menu.write_row(0, 'Temperature')
         menu.write_row(1, 'CPU:' + str(self.get_cpu_temp()))
         menu.write_row(2, 'GPU:' + str(self.get_gpu_temp()))

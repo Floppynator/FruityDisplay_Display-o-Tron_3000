@@ -8,7 +8,7 @@ import dot3k.backlight as backlight
 import dot3k.lcd as lcd
 import dot3k.joystick
 import time
-from configobj import ConfigObj
+import configobj as config
 
 # libs
 from about import AboutFruityWifi, About
@@ -17,14 +17,12 @@ from settings import Backlight, Randomlight, Contrast
 from modules import Modules
 from commandz import Commandz
 
-config = ConfigObj("init.conf")
-
 # versions
 __FIRMWARE__ = "1.0-o-tron"
 __FRUITYWIFI__ = "2.2"
 
 # fire up the display background with the color from config file
-backlight.rgb(int(config["lcd"]["default_color"][0]), int(config["lcd"]["default_color"][1]), int(config["lcd"]["default_color"][2]) )
+backlight.rgb(255,255,255)
 
 # menu struct
 menu = Menu(
@@ -99,11 +97,9 @@ def handle_right(pin):
 def exit():
 	print "Bye ;)"
 	lcd.clear()
-	lcd.set_cursor_position(0,0)
+	lcd.set_cursor_position(4,1)
 	lcd.write("Bye Bye!")
-	menu.write_option(row=1, text="FruityWiFi v" + __FRUITYWIFI__, scroll=True)
-	menu.write_option(row=2, text="Firmware v" + __FIRMWARE__, sroll=True)
-	time.sleep(5)
+	time.sleep(2)
 	lcd.clear()
 	backlight.rgb(0,0,0)
 	sys.exit()
@@ -116,8 +112,4 @@ while 1:
 	except KeyboardInterrupt:
 	    print 
 	    exit()
-        except Exception, err:
-            print 'Caught an exception'
-            print "Error: " + str(err)
-            exit()
 
