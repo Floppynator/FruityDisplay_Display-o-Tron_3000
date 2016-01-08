@@ -20,33 +20,28 @@ class Randomlight(MenuOption):
         MenuOption.__init__(self)
 
     def up(self):
-        self.r = random.randint(255)
-        self.g = random.randint(255)
-        self.b = random.randint(255)
+        self.r = random.randint(0,255)
+        self.g = random.randint(0,255)
+        self.b = random.randint(0,255)
         
         self.backlight.rgb(self.r, self.g, self.b)
         return True 
         
     def down(self):
-        self.r = random.randint(255)
-        self.g = random.randint(255)
-        self.b = random.randint(255)
+        self.r = random.randint(0,255)
+        self.g = random.randint(0,255)
+        self.b = random.randint(0,255)
         
         self.backlight.rgb(self.r, self.g, self.b)
         return True 
         
     def left(self):
-        self.r = random.randint(255)
-        self.g = random.randint(255)
-        self.b = random.randint(255)
-        
-        self.backlight.rgb(self.r, self.g, self.b)
-        return True 
+	return False
         
     def right(self):
-        self.r = random.randint(255)
-        self.g = random.randint(255)
-        self.b = random.randint(255)
+        self.r = random.randint(0,255)
+        self.g = random.randint(0,255)
+        self.b = random.randint(0,255)
         
         self.backlight.rgb(self.r, self.g, self.b)
         return True 
@@ -248,19 +243,20 @@ class Contrast(MenuOption):
         self._icons_setup = False
         MenuOption.__init__(self)
 
-    def right(self):
+    def up(self):
         self.contrast += 1
         if self.contrast > 63:
             self.contrast = 0
         self.update_contrast()
         return True
 
-    def left(self):
+    def down(self):
         self.contrast -= 1
         if self.contrast < 0:
             self.contrast = 63
         self.update_contrast()
         return True
+
 
     def setup_icons(self, menu):
         menu.lcd.create_char(0, MenuIcon.arrow_left_right)

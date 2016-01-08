@@ -75,7 +75,20 @@ class GraphCPU(MenuOption):
         self.cpu_samples = [0, 0, 0, 0, 0]
         self.cpu_avg = 0
         self.last = self.millis()
-        self.config = ConfigObj("init.conf")
+	config = ConfigObj("init.conf")	
+
+	self.cpu50_90_r = int(config["lcd"]["cpu50_90"][0])
+	self.cpu50_90_g = int(config["lcd"]["cpu50_90"][1])
+	self.cpu50_90_b = int(config["lcd"]["cpu50_90"][2])
+
+	self.cpu90_99_r = int(config["lcd"]["cpu90_99"][0])
+	self.cpu90_99_g = int(config["lcd"]["cpu90_99"][1])
+	self.cpu90_99_b = int(config["lcd"]["cpu90_99"][2])
+
+	self.default_color_r = int(config["lcd"]["default_color"][0])
+	self.default_color_g = int(config["lcd"]["default_color"][1])
+	self.default_color_b = int(config["lcd"]["default_color"][2])
+
         MenuOption.__init__(self)
 
     def redraw(self, menu):
@@ -83,20 +96,20 @@ class GraphCPU(MenuOption):
         if now - self.last < 1000:
             return false
 
-        # display color depends from cpu load
-        if psutil.cpu_percent() > 50:
-            self.backlight.rgb(int(self.config["lcd"]["cpu50_90"][0]), int(self.config["lcd"]["cpu50_90"][1]), int(self.config["lcd"]["cpu50_90"][2]))
-        elif psutil.cpu_percent() > 90:
-            self.backlight.rgb(int(self.config["lcd"]["cpu90_99"][0]), int(self.config["lcd"]["cpu90_99"][1]), int(self.config["lcd"]["cpu90_99"][2]))
-        else: 
-            # default
-            self.backlight.rgb(int(self.config["lcd"]["default_color"][0]), int(self.config["lcd"]["default_color"][1]), int(self.config["lcd"]["default_color"][2]))
-            
         self.cpu_samples.append(psutil.cpu_percent())
         self.cpu_samples.pop(0)
         self.cpu_avg = sum(self.cpu_samples) / len(self.cpu_samples)
 
         self.cpu_avg = round(self.cpu_avg * 100.0) / 100.0
+
+	# display color depends from cpu load
+        if self.cpu_avg > 50:
+            self.backlight.rgb(self.cpu50_90_r, self.cpu50_90_g, self.cpu50_90_b)
+        elif self.cpu_avg > 90:
+            self.backlight.rgb(self.cpu90_99_r, self.cpu90_99_g, self.cpu90_99_b)
+        else:
+            # default
+            self.backlight.rgb(self.default_color_r, self.default_color_g, self.default_color_b)
 
         menu.write_row(0, 'CPU Load')
         menu.write_row(1, str(self.cpu_avg) + '%')
@@ -120,8 +133,17 @@ class GraphTemp(MenuOption):
     def __init__(self, backlight=None):
         self.backlight = backlight
         self.last = self.millis()
-        self.config = ConfigObj("init.conf")
-        MenuOption.__init__(self)
+        config = ConfigObj("init.conf")
+
+	self.temp50_70_r = int(config["lcd"]["temp50_70"][0])
+	self.temp50_70_g = int(config["lcd"]["temp50_70"][1])
+	self.temp50_70_b = int(config["lcd"]["temp50_70"][2])
+
+	self.default_color_r = int(config["lcd"]["default_color"][0])
+        self.default_color_g = int(config["lcd"]["default_color"][1])
+        self.default_color_b = int(config["lcd"]["default_color"][2])
+        
+	MenuOption.__init__(self)
 
     def get_cpu_temp(self):
         tempFile = open("/sys/class/thermal/thermal_zone0/temp")
@@ -143,12 +165,12 @@ class GraphTemp(MenuOption):
 
         # display color depends from cpu/gpu temp
         if self.get_cpu_temp() > 50 or self.get_gpu_temp() > 50:
-            self.backlight.rgb(int(self.config["lcd"]["temp50_70"][0]), int(self.config["lcd"]["temp50_70"][1]), int(self.config["lcd"]["temp50_70"][2]))
+            self.backlight.rgb(self.temp50_70_r, self.temp50_70_g, self.temp50_70_b)
         elif self.get_cpu_temp() > 70 or self.get_gpu_temp() > 70:
-            self.backlight.rgb(int(self.config["lcd"]["temp70_99"][0]), int(self.config["lcd"]["temp70_99"][1]), int(self.config["lcd"]["temp70_99"][2]))
+            self.backlight.rgb(self.temp70_99_r, self.temp70_99_g, self.temp70_99_b)
         else:
             # default
-            self.backlight.rgb(int(self.config["lcd"]["default_color"][0]), int(self.config["lcd"]["default_color"][1]), int(self.config["lcd"]["default_color"][2]))
+            self.backlight.rgb(self.default_color_r, self.default_color_g, self.default_color_b)
             
         menu.write_row(0, 'Temperature')
         menu.write_row(1, 'CPU:' + str(self.get_cpu_temp()))

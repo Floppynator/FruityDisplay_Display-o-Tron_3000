@@ -15,7 +15,7 @@ from about import AboutFruityWifi, About
 from status import IPAddress, GraphTemp, GraphCPU, GraphNetSpeed
 from settings import Backlight, Randomlight, Contrast
 from modules import Modules
-#from commands import Commands
+from commandz import Commandz
 
 config = ConfigObj("init.conf")
 
@@ -30,7 +30,7 @@ backlight.rgb(int(config["lcd"]["default_color"][0]), int(config["lcd"]["default
 menu = Menu(
     structure={
         'Modules': Modules(),
- #       'Commands': Commands(),
+        'Commands': Commandz(),
         'About': {
             'This App': About(),
             'FruityWifi': AboutFruityWifi(__FRUITYWIFI__, __FIRMWARE__)
@@ -41,11 +41,8 @@ menu = Menu(
             'Temp': GraphTemp(backlight)
         }, 
         'Settings': {
-            'Display': {
-                'Contrast': Contrast(lcd),
-                'Backlight': Backlight(backlight),
-                'Randomlight': Randomlight (backlight)
-            }
+            'Contrast': Contrast(lcd),
+            'Randomlight': Randomlight(backlight)            
         }
     },
     lcd=lcd
@@ -87,15 +84,40 @@ showWelcomeMessage()
 def handle_up(pin):
     menu.up()
 
-
 @dot3k.joystick.on(dot3k.joystick.DOWN)
 def handle_down(pin):
     menu.down()
+
+@dot3k.joystick.on(dot3k.joystick.LEFT)
+def handle_left(pin):
+    menu.left()
 
 @dot3k.joystick.on(dot3k.joystick.RIGHT)
 def handle_right(pin):
     menu.right()
 
+def exit():
+	print "Bye ;)"
+	lcd.clear()
+	lcd.set_cursor_position(0,0)
+	lcd.write("Bye Bye!")
+	menu.write_option(row=1, text="FruityWiFi v" + __FRUITYWIFI__, scroll=True)
+	menu.write_option(row=2, text="Firmware v" + __FIRMWARE__, sroll=True)
+	time.sleep(5)
+	lcd.clear()
+	backlight.rgb(0,0,0)
+	sys.exit()
+
+
 while 1:
-    menu.redraw()
-    time.sleep(0.01)
+	try:	
+	    menu.redraw()
+            time.sleep(0.01)
+	except KeyboardInterrupt:
+	    print 
+	    exit()
+        except Exception, err:
+            print 'Caught an exception'
+            print "Error: " + str(err)
+            exit()
+
