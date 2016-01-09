@@ -23,8 +23,7 @@ requests.packages.urllib3.disable_warnings() # DISABLE SSL CHECK WARNINGS
 
 class Webclient:
 
-    def __init__(self, server, token):
-        
+    def __init__(self, server, token):    
         self.global_webserver = server
         self.path = "/modules/api/includes/ws_action.php"
         self.s = requests.session()
@@ -65,3 +64,6 @@ class Webclient:
     
     def submitGet(self, data):
         response = self.s.get(self.global_webserver + self.path + "?" + data)
+
+	return response
+

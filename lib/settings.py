@@ -21,6 +21,8 @@ class Randomlight(MenuOption):
         self.g = self.default_color_g
         self.b = self.default_color_b
 	
+	self.backlight.rgb(self.r, self.g, self.b)
+	
     def up(self):
         self.r = random.randint(0,255)
         self.g = random.randint(0,255)

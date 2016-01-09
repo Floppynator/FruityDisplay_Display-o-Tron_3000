@@ -8,7 +8,6 @@ import dot3k.backlight as backlight
 import dot3k.lcd as lcd
 import dot3k.joystick
 import time
-import configobj as config
 
 # libs
 from about import AboutFruityWifi, About
@@ -16,18 +15,87 @@ from status import IPAddress, GraphTemp, GraphCPU, GraphNetSpeed
 from settings import Backlight, Randomlight, Contrast
 from modules import Modules
 from commandz import Commandz
+from webclient import Webclient
+from configobj import ConfigObj
+
+config = ConfigObj("dot3k.cfg")
 
 # versions
 __FIRMWARE__ = "1.0-o-tron"
 __FRUITYWIFI__ = "2.2"
 
-# fire up the display background with the color from config file
-backlight.rgb(255,255,255)
+# bash output
+class bcolors:
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERL = '\033[4m'
+    ENDC = '\033[0m'
+
+# error and message outputs
+def show_error(message):
+    print bcolors.RED + bcolors.BOLD + "[-] " + bcolors.ENDC + str(message)
+
+def show_alert(message):
+    print bcolors.YELLOW + bcolors.BOLD + "[!] " + bcolors.ENDC + str(message)
+
+def show_msg(message):
+    print bcolors.GREEN + bcolors.BOLD + "[+] " + bcolors.ENDC + str(message)
+
+def show_info(message):
+    print bcolors.BLUE + bcolors.BOLD + "[*] " + bcolors.ENDC + str(message)
+
+# Show banner
+def show_banner():
+
+    banner = """
+ ___         _ _      __      ___ ___ _   ___  _         _           
+| __| _ _  _(_) |_ _  \ \    / (_) __(_) |   \(_)____ __| |__ _ _  _ 
+| _| '_| || | |  _| || \ \/\/ /| | _|| | | |) | (_-< '_ \ / _` | || |
+|_||_|  \_,_|_|\__|\_, |\_/\_/ |_|_| |_| |___/|_/__/ .__/_\__,_|\_, |
+                   |__/                            |_|          |__/
+             """
+
+    print banner
+    print "Site: " + bcolors.BOLD + "http://www.fruitywifi.com" + bcolors.ENDC
+    print "Twitter: " + bcolors.BOLD + "@fruitywifi @xtr4nge" + bcolors.ENDC
+    print
+
+show_banner()
+
+# START FRUITYWIFI SESSION [API]
+show_info("Establishing session with FruityWiFi server...")
+try:
+    w = Webclient(config['api']['server'], config['api']['token'])
+    w.login()
+    w.loginCheck()
+    execute = "/module"
+    modules =  w.submitGet("api=" + str(execute))
+    show_msg("Session established. Have fun ;)")
+    print 
+except:
+    time.sleep(1)
+    show_error("The session cannot be established. Check the connection details in dot3k.cfg")
+    print 
+    sys.exit()
+
+# CALL API
+def call_api(execute):
+    out =  w.submitGet("api=" + str(execute))
+    try:
+        return out.json()
+    except:
+        pass
 
 # menu struct
 menu = Menu(
     structure={
-        'Modules': Modules(),
+        'Modules': Modules(modules),
         'Commands': Commandz(),
         'About': {
             'This App': About(),
