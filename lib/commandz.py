@@ -1,6 +1,7 @@
 # Commandz from FruityWifi
 from dot3k.menu import Menu
 from dot3k.menu import MenuOption
+import dot3k.backlight as backlight
 import dot3k.lcd as lcd
 from configobj import ConfigObj
 import time
@@ -39,6 +40,14 @@ class Commandz(MenuOption):
     def execCommand(self, cmd):
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
+	
+	# fire up bargraph leds! Wohoo
+        for i in range(100):
+            backlight.set_graph(i / 70.0)
+            time.sleep(0.005)
+        
+        # disable leds =(
+	backlight.set_graph(0)
 
         return output.strip()
     
