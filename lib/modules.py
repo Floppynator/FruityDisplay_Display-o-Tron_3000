@@ -1,21 +1,29 @@
 # Modules from FruityWifi
+import sys
+sys.path.append('/')
 from dot3k.menu import MenuOption
 import dot3k.lcd as lcd
+from webclient import Webclient
 
 class Modules(MenuOption):
     
-    def __init__(self, modules_out):
+    def __init__(self):
 	self.ready = False
 	self.whitelist = ""
         self.blacklist = ""
         self.whitelist_status = ""
         self.blacklist_status = ""
-
+        self.server = ""
+        self.token = ""
+        self.webclient = ""
 	self.modules = []
 	self.selected_module = 0	
 	self.last_update = 0
 
-	for line in modules_out.json():
+	# get the modules as JSON
+	complete_modules = self.getModules()
+	
+	for line in complete_modules:
 	    if self.whitelist:
         	if line in self.whitelist:
 	            self.modules.append(line)
@@ -33,7 +41,11 @@ class Modules(MenuOption):
         self.blacklist = self.getWhitelist(config)
         self.whitelist_status = self.getWhitelistStatus(config)
         self.blacklist_status = self.getBlacklistStatus(config)
-
+        
+        # server config
+        self.webclient = Webclient(config.get('API', 'server'), 
+        	                   config.get('API','token'))
+        
 	run_this_module = [0, 24, 30, 31, 30, 24, 0, 0]
         stop_this_module = [0, 31, 31, 31, 31, 31, 0, 0]
         # Add a Pirat! Harr Harr Harr
@@ -46,6 +58,12 @@ class Modules(MenuOption):
         lcd.create_char(2, module_is_running)
 
 	self.ready = True
+ 
+    def getModules(self):
+    	try:
+    	    return self.webclient.submitGet("api=" + str("/module")).json()
+    	except:
+    	    print("Cant get Modules :(")
 
     def getWhitelistStatus(self, config):
 	white_list_status = config.get("white_list", "status")
@@ -131,10 +149,10 @@ class Modules(MenuOption):
         if self.selected_module == index:
             if self.getModuleStatus():
                 # module is selected and running then show a stop button
-                icon = chr(0)
+                icon = chr(1)
             elif
                 # module is selected and isnt running show a play button
-                icon = chr(1)
+                icon = chr(0)
       
         menu.write_option(row, moduleName, icon)
 
