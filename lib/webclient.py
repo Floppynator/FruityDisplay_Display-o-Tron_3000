@@ -18,6 +18,7 @@
 
 import requests
 from requests import session
+import sys
 
 requests.packages.urllib3.disable_warnings() # DISABLE SSL CHECK WARNINGS
 
@@ -28,6 +29,23 @@ class Webclient:
         self.path = "/modules/api/includes/ws_action.php"
         self.s = requests.session()
         self.token = token
+        
+	try:
+            self.login()
+            self.loginCheck()
+            print("Session established. Have fun ;)")
+        except: 
+            sleep(1)
+            print("The session cannot be established. Check the connection details.")
+            sys.exit()
+
+    def call_api(execute):
+        self.submitGet("api=" + str(execute))
+        
+        try:
+            return out.json()
+        except:
+            return False
 
     def login(self):
 
