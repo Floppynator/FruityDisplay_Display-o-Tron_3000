@@ -68,34 +68,10 @@ def show_banner():
 
 show_banner()
 
-# START FRUITYWIFI SESSION [API]
-show_info("Establishing session with FruityWiFi server...")
-try:
-    w = Webclient(config['api']['server'], config['api']['token'])
-    w.login()
-    w.loginCheck()
-    execute = "/module"
-    modules =  w.submitGet("api=" + str(execute))
-    show_msg("Session established. Have fun ;)")
-    print 
-except:
-    time.sleep(1)
-    show_error("The session cannot be established. Check the connection details in dot3k.cfg")
-    print 
-    sys.exit()
-
-# CALL API
-def call_api(execute):
-    out =  w.submitGet("api=" + str(execute))
-    try:
-        return out.json()
-    except:
-        pass
-
 # menu struct
 menu = Menu(
     structure={
-        'Modules': Modules(modules),
+        'Modules': Modules(),
         'Commands': Commandz(),
         'About': {
             'This App': About(),

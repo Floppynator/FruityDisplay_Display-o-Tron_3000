@@ -1,6 +1,5 @@
 '''
     Copyright (C) 2013-2015 xtr4nge [_AT_] gmail.com
-    Edited by christian.haip [_AT_] gmail.com 
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,34 +17,20 @@
 
 import requests
 from requests import session
-import sys
 
 requests.packages.urllib3.disable_warnings() # DISABLE SSL CHECK WARNINGS
 
 class Webclient:
 
-    def __init__(self, server, token):    
+    def __init__(self, server, token):
+        
         self.global_webserver = server
         self.path = "/modules/api/includes/ws_action.php"
         self.s = requests.session()
         self.token = token
-        
-	try:
-            self.login()
-            self.loginCheck()
-            print("Session established. Have fun ;)")
-        except: 
-            sleep(1)
-            print("The session cannot be established. Check the connection details.")
-            sys.exit()
 
-    def call_api(execute):
-        self.submitGet("api=" + str(execute))
-        
-        try:
-            return out.json()
-        except:
-            return False
+        self.login()
+        self.loginCheck()
 
     def login(self):
 
@@ -82,6 +67,4 @@ class Webclient:
     
     def submitGet(self, data):
         response = self.s.get(self.global_webserver + self.path + "?" + data)
-
-	return response
-
+        return response
