@@ -151,6 +151,9 @@ def exit():
 	backlight.rgb(0,0,0)
 	sys.exit()
 
+# move menu for modules default selection
+menu.up()
+menu.up()
 
 while 1:
 	try:	

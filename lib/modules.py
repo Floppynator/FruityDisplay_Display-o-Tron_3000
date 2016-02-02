@@ -23,14 +23,8 @@ class Modules(MenuOption):
         self.blacklist = self.getBlacklist(config)
         self.whitelist_status = self.getWhitelistStatus(config)
         self.blacklist_status = self.getBlacklistStatus(config)
-        
-	run_this_module = [0, 24, 30, 31, 30, 24, 0, 0]
-        stop_this_module = [0, 31, 31, 31, 31, 31, 0, 0]
-        # Add a Pirat! Harr Harr Harr
-        module_is_running = [[0x00, 0x1f, 0x0b, 0x03, 0x00, 0x04, 0x11, 0x1f],[0x00, 0x1f, 0x16, 0x06, 0x00, 0x08, 0x03, 0x1e],[0x00, 0x1f, 0x0b, 0x03, 0x00, 0x04, 0x11, 0x1f],[0x00, 0x1f, 0x05, 0x01, 0x00, 0x02, 0x08, 0x07]]
-        lcd.create_char(0, run_this_module)
-        lcd.create_char(1, stop_this_module)
-        lcd.create_char(3, self.getAnimFrame(module_is_running, 2))
+
+        lcd.create_char(0, [0, 4, 14, 0, 0, 14, 4, 0])  # Up down arrow
 
         # init webclient
         self.webclient = Webclient(config)
@@ -113,7 +107,7 @@ class Modules(MenuOption):
 
     def getModuleStatus(self):
     	# TODO: read menu status from weblcient
-    	return True
+    	return False
 
     def redraw_modules(self, menu):
         if not self.ready:
@@ -135,18 +129,18 @@ class Modules(MenuOption):
  
  	# show the Pirat for running module!
 	if self.getModuleStatus():
-	    icon = ' '
+	    icon = '[Y]'
 	else:
-	    icon = ' '
+	    icon = '[N]'
 	
 	# if selected module 
         if self.selected_module == index:
             if self.getModuleStatus():
                 # module is selected and running then show a stop button
-                icon = ' '
+                icon = '[S]'
             else:
                 # module is selected and isnt running show a play button
-                icon = ' '
+                icon = chr(0) + '[R]'
       
         menu.write_option(row, moduleName, icon)
 
