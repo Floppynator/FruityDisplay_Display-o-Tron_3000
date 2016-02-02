@@ -67,6 +67,13 @@ class Webclient:
             return True
         else:
             return False
+
+    def call_api(self, execute):
+        out =  self.submitGet("api=" + str(execute))
+        try:
+            return out.json()
+        except:
+            pass
     
     def submitGet(self, data):
         response = self.s.get(self.global_webserver + self.path + "?" + data)

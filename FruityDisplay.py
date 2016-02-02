@@ -12,7 +12,7 @@ import time
 
 # libs
 from about import AboutFruityWifi, About
-from status import IPAddress, GraphTemp, GraphCPU, GraphNetSpeed
+from status import IPAddress
 from settings import Backlight, Randomlight, Contrast
 from modules import Modules
 from quitProgramm import QuitProgramm
@@ -79,11 +79,7 @@ menu = Menu(
             'This App': About(),
             'FruityWifi': AboutFruityWifi(__FRUITYWIFI__, __FIRMWARE__)
         },
-        'Status': {
-            'IP': IPAddress(),
-            'CPU': GraphCPU(backlight),
-            'Temp': GraphTemp(backlight)
-        }, 
+        'IP': IPAddress(), 
         'Settings': {
             'Contrast': Contrast(lcd),
             'Randomlight': Randomlight(backlight)            

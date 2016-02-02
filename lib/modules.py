@@ -2,6 +2,7 @@
 import sys
 sys.path.append('/')
 from dot3k.menu import MenuOption
+import dot3k.backlight as backlight
 import dot3k.lcd as lcd
 from webclient import Webclient
 import time
@@ -102,12 +103,44 @@ class Modules(MenuOption):
 	self.selected_module = self.prev_module()
 
     def right(self):
-	# TODO: enable/disable module over webclient
-	return True
+	v_module = self.modules[self.selected_module]
 
-    def getModuleStatus(self):
-    	# TODO: read menu status from weblcient
-    	return False
+        isRunning = self.getModuleStatus(self.modules[self.selected_module])
+
+        if isRunning == "Y":
+            # module is running, stop it
+            execute = "/module/" + v_module + "/stop"
+        else:
+            # module is not running, start it
+            execute = "/module/" + v_module + "/start"
+
+        backlight.set_bar(0, 20)
+        result = self.webclient.call_api(execute)
+
+        # fire up bargraph leds! Wohoo
+        for i in range(100):
+            backlight.set_graph(i / 70.0)
+            time.sleep(0.005)
+            
+        # disable leds =(
+        backlight.set_graph(0)
+
+        try:
+            if result[0] == True:
+                return "Y"
+            else:
+                return "N"    
+        except:
+            return "E"
+                                         
+    def getModuleStatus(self, v_module):
+        execute = "/module/" + v_module
+        result = self.webclient.call_api(execute)
+
+	if result[0] == True:
+            return "Y"
+        else:
+            return "N"
 
     def redraw_modules(self, menu):
         if not self.ready:
@@ -126,21 +159,17 @@ class Modules(MenuOption):
 
     def draw_module(self, menu, row, index):
 	moduleName = self.modules[index]
- 
- 	# show the Pirat for running module!
-	if self.getModuleStatus():
-	    icon = '[Y]'
-	else:
-	    icon = '[N]'
+
+        icon = ' '
 	
 	# if selected module 
         if self.selected_module == index:
-            if self.getModuleStatus():
+            if self.getModuleStatus(moduleName) == "Y":
                 # module is selected and running then show a stop button
-                icon = '[S]'
+                icon = '[Y]'
             else:
                 # module is selected and isnt running show a play button
-                icon = chr(0) + '[R]'
+                icon = chr(0) + '[N]'
       
         menu.write_option(row, moduleName, icon)
 
