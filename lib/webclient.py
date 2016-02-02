@@ -17,13 +17,14 @@
 
 import requests
 from requests import session
+from consoleMessages import ConsoleMessages 
 
 requests.packages.urllib3.disable_warnings() # DISABLE SSL CHECK WARNINGS
 
 class Webclient:
 
     def __init__(self, config):
-
+        self.consoleMessages = ConsoleMessages()
         self.server = config.get("api","server")
         self.token = config.get("api","token")
         
@@ -32,8 +33,12 @@ class Webclient:
         self.s = requests.session()
         self.token = self.token
 
-        self.login()
-        self.loginCheck()
+        try:
+            self.login()
+            self.loginCheck()
+            self.consoleMessages.show_msg("Session established. Have fun ;)")
+        except:
+            self.consoleMessages.show_error("The session cannot be established. Check the connection details.")
 
     def login(self):
 
@@ -54,7 +59,7 @@ class Webclient:
             self.login()
         
         if response.text != "":
-            print "Ah, Ah, Ah! You didn't say the magic word!"
+            self.consoleMessages.show_error("Ah, Ah, Ah! You didn't say the magic word!")
             sys.exit()
         
         return True

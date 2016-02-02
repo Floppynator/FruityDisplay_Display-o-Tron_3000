@@ -6,10 +6,12 @@ import dot3k.backlight as backlight
 import dot3k.lcd as lcd
 from webclient import Webclient
 import time
+from consoleMessages import ConsoleMessages
 
 class Modules(MenuOption):
     
     def __init__(self):
+        self.consoleMessages = ConsoleMessages()
 	self.ready = False
 	self.modules = []
 	self.selected_module = 0	
@@ -98,9 +100,11 @@ class Modules(MenuOption):
 
     def down(self):
         self.selected_module = self.next_module()
+        self.ready = True
 
     def up(self):
 	self.selected_module = self.prev_module()
+	self.ready = True
 
     def right(self):
 	v_module = self.modules[self.selected_module]
@@ -110,9 +114,11 @@ class Modules(MenuOption):
         if isRunning == "Y":
             # module is running, stop it
             execute = "/module/" + v_module + "/stop"
+            self.consoleMessages.show_info("Stoping module: " + str(v_module) + "")
         else:
             # module is not running, start it
             execute = "/module/" + v_module + "/start"
+            self.consoleMessages.show_info("Starting module: " + str(v_module) + "")
 
         backlight.set_bar(0, 20)
         result = self.webclient.call_api(execute)
@@ -125,6 +131,8 @@ class Modules(MenuOption):
         # disable leds =(
         backlight.set_graph(0)
 
+        self.ready = True
+
         try:
             if result[0] == True:
                 return "Y"
@@ -134,12 +142,15 @@ class Modules(MenuOption):
             return "E"
                                          
     def getModuleStatus(self, v_module):
+        self.consoleMessages.show_info("Get module status for: " + str(v_module) + "")
         execute = "/module/" + v_module
         result = self.webclient.call_api(execute)
 
 	if result[0] == True:
+            self.consoleMessages.show_info("Status for module " + str(v_module) + " is [Y]")
             return "Y"
         else:
+            self.consoleMessages.show_info("Status for module " + str(v_module) + " is [N]")
             return "N"
 
     def redraw_modules(self, menu):
@@ -157,6 +168,8 @@ class Modules(MenuOption):
         if len(self.modules) > 1:
             self.draw_module(menu, 2, self.next_module())
 
+        self.ready = False
+
     def draw_module(self, menu, row, index):
 	moduleName = self.modules[index]
 
@@ -172,8 +185,8 @@ class Modules(MenuOption):
                 icon = chr(0) + '[N]'
       
         menu.write_option(row, moduleName, icon)
-
+        
     def redraw(self, menu):
         
-	if self.last_update == 0:
+	if self.ready == True:
 	    self.redraw_modules(menu)
