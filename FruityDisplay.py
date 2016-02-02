@@ -26,32 +26,6 @@ config = ConfigObj("dot3k.cfg")
 __FIRMWARE__ = "1.0-o-tron"
 __FRUITYWIFI__ = "2.2"
 
-# bash output
-class bcolors:
-    PURPLE = '\033[95m'
-    CYAN = '\033[96m'
-    DARKCYAN = '\033[36m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    BOLD = '\033[1m'
-    UNDERL = '\033[4m'
-    ENDC = '\033[0m'
-
-# error and message outputs
-def show_error(message):
-    print bcolors.RED + bcolors.BOLD + "[-] " + bcolors.ENDC + str(message)
-
-def show_alert(message):
-    print bcolors.YELLOW + bcolors.BOLD + "[!] " + bcolors.ENDC + str(message)
-
-def show_msg(message):
-    print bcolors.GREEN + bcolors.BOLD + "[+] " + bcolors.ENDC + str(message)
-
-def show_info(message):
-    print bcolors.BLUE + bcolors.BOLD + "[*] " + bcolors.ENDC + str(message)
-
 # Show banner
 def show_banner():
 
