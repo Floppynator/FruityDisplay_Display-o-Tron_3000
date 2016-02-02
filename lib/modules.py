@@ -33,7 +33,7 @@ class Modules(MenuOption):
         lcd.create_char(3, self.getAnimFrame(module_is_running, 2))
 
         # init webclient
-        self.webclient = Webclient(config.get("api","server"), config.get("api","token"))
+        self.webclient = Webclient(config)
         
         # get the modules as JSON
 	complete_modules = self.getModules()
@@ -135,7 +135,7 @@ class Modules(MenuOption):
  
  	# show the Pirat for running module!
 	if self.getModuleStatus():
-	    icon = chr(2)
+	    icon = ' '
 	else:
 	    icon = ' '
 	
@@ -143,10 +143,10 @@ class Modules(MenuOption):
         if self.selected_module == index:
             if self.getModuleStatus():
                 # module is selected and running then show a stop button
-                icon = chr(1)
+                icon = ' '
             else:
                 # module is selected and isnt running show a play button
-                icon = chr(0)
+                icon = ' '
       
         menu.write_option(row, moduleName, icon)
 

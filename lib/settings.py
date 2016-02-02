@@ -2,6 +2,7 @@
 
 from dot3k.menu import MenuOption
 from dot3k.menu import MenuIcon
+import dot3k.lcd as lcd
 import colorsys
 import random
 
@@ -12,14 +13,10 @@ class Randomlight(MenuOption):
         MenuOption.__init__(self)
 
     def setup(self, config):
-        default_color = config.get("lcd","default_color").split(",")
-        self.default_color_r = int(default_color[0])
-        self.default_color_g = int(default_color[1])
-        self.default_color_b = int(default_color[2])
-
-        self.r = self.default_color_r
-        self.g = self.default_color_g
-        self.b = self.default_color_b
+        self.config = config
+        self.r = int(config.get("Backlight","r"))
+        self.g = int(config.get("Backlight","g"))
+        self.b = int(config.get("Backlight","b"))
 	
 	self.backlight.rgb(self.r, self.g, self.b)
 	
@@ -27,7 +24,8 @@ class Randomlight(MenuOption):
         self.r = random.randint(0,255)
         self.g = random.randint(0,255)
         self.b = random.randint(0,255)
-        
+
+        self.updateBackground()
         self.backlight.rgb(self.r, self.g, self.b)
         return True 
         
@@ -35,23 +33,29 @@ class Randomlight(MenuOption):
         self.r = random.randint(0,255)
         self.g = random.randint(0,255)
         self.b = random.randint(0,255)
-        
+
+        self.updateBackground()        
         self.backlight.rgb(self.r, self.g, self.b)
         return True 
-        
-    def left(self):
-	return False
         
     def right(self):
         self.r = random.randint(0,255)
         self.g = random.randint(0,255)
         self.b = random.randint(0,255)
-        
+
+        self.updateBackground()
         self.backlight.rgb(self.r, self.g, self.b)
         return True 
+         
+
+    def updateBackground(self):
+        self.set_option('Backlight', 'r', str(self.r))
+        self.set_option('Backlight', 'g', str(self.g))
+        self.set_option('Backlight', 'b', str(self.b))
     
     def redraw(self, menu):
-        menu.write_row(0, chr(1) + 'Randomlight')
+        lcd.clear()
+        menu.write_row(1, chr(0) + 'Randomlight')
         
         
         

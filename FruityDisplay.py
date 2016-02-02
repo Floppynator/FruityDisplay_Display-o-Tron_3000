@@ -9,11 +9,13 @@ import dot3k.lcd as lcd
 import dot3k.joystick
 import time
 
+
 # libs
 from about import AboutFruityWifi, About
 from status import IPAddress, GraphTemp, GraphCPU, GraphNetSpeed
 from settings import Backlight, Randomlight, Contrast
 from modules import Modules
+from quitProgramm import QuitProgramm
 from commandz import Commandz
 from webclient import Webclient
 from configobj import ConfigObj
@@ -85,7 +87,8 @@ menu = Menu(
         'Settings': {
             'Contrast': Contrast(lcd),
             'Randomlight': Randomlight(backlight)            
-        }
+        },
+        'Quit': QuitProgramm()
     },
     lcd=lcd
 )
