@@ -19,8 +19,12 @@ from quitProgramm import QuitProgramm
 from commandz import Commandz
 from webclient import Webclient
 from configobj import ConfigObj
+from consoleMessages import ConsoleMessages
 
 config = ConfigObj("dot3k.cfg")
+
+# messages
+cm = ConsoleMessages()
 
 # versions
 __FIRMWARE__ = "1.0-o-tron"
@@ -38,8 +42,8 @@ def show_banner():
              """
 
     print banner
-    print "Site: " + bcolors.BOLD + "http://www.fruitywifi.com" + bcolors.ENDC
-    print "Twitter: " + bcolors.BOLD + "@fruitywifi @xtr4nge" + bcolors.ENDC
+    print "Site: " + cm.BOLD + "http://www.fruitywifi.com" + cm.ENDC
+    print "Twitter: " + cm.BOLD + "@fruitywifi @xtr4nge" + cm.ENDC
     print
 
 show_banner()
