@@ -61,12 +61,16 @@ class Commandz(MenuOption):
 	# fire cmd
 	self.last_update = 1
 
-	lcd.clear()
-	lcd.write("Execute CMD")
-	lcd.set_cursor_position(0,1)
-	cmd = self.config.get('commands', self.cmds[self.selected_cmd])
+        cmd = self.config.get('commands', self.cmds[self.selected_cmd])
+        time.sleep(1)
 	cmd = cmd.split(",")
+
+	lcd.clear()
+	lcd.set_cursor_position(0,0)
+	lcd.write("Execute CMD")	
+	lcd.set_cursor_position(0,1)
 	lcd.write(cmd[0])
+	time.sleep(1)
         
 	# EXECUTE THIS COMMAND
         out = str(self.execCommand(cmd[1]))
@@ -75,8 +79,9 @@ class Commandz(MenuOption):
 	lcd.clear()
 	lcd.set_cursor_position(6,1)
 	lcd.write("Done.")
-	time.sleep(2)
-	self.last_update = 0	
+	time.sleep(1)
+	lcd.clear()
+	self.last_update = 0
 
 	return True
 

@@ -43,8 +43,8 @@ def show_banner():
 
     print banner
     print "Site: " + cm.BOLD + "http://www.fruitywifi.com" + cm.ENDC
-    print "Twitter: " + cm.BOLD + "@fruitywifi @xtr4nge" + cm.ENDC
-    print
+    print "Twitter: " + cm.BOLD + "@fruitywifi @xtr4nge @HA1pe" + cm.ENDC
+    print 
 
 show_banner()
 

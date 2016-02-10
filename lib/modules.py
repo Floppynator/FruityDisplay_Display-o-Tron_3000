@@ -179,7 +179,7 @@ class Modules(MenuOption):
         if self.selected_module == index:
             if self.getModuleStatus(moduleName) == "Y":
                 # module is selected and running then show a stop button
-                icon = '[Y]'
+                icon = chr(0) + '[Y]'
             else:
                 # module is selected and isnt running show a play button
                 icon = chr(0) + '[N]'
